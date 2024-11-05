@@ -21,6 +21,9 @@ The main Python script to execute the simulation is `2d_simulator.py`. Below is 
 
 This structure provides a modular setup for simulation and controller management, with options to add more models and controllers as needed.
 
+
+![Short video description](./media/python_sim_lat_mpc.gif)
+
 --- 
 
 
