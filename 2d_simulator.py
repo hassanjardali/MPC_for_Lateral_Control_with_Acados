@@ -12,6 +12,7 @@ from mpc_controller import MPCController
 # Initialization
 last_closest_idx = 0
 max_data_length = 500 
+target_velocity = 75 # Target velocity in m/s
 
 # Function to read the raceline from CSV
 def load_raceline(file_path):
@@ -20,7 +21,7 @@ def load_raceline(file_path):
     """
     return pd.read_csv(file_path)
 
-def animate_simulation(car, path, pid, mpc_controller, dt=0.1, max_time=20.0, search_window=10, num_points = 100, N_pred=51):
+def animate_simulation(car, path, pid, mpc_controller, dt=0.1, max_time=20.0, search_window=10, num_points = 100, N_pred=45):
     
     # Create a figure with GridSpec for the layout
     fig = plt.figure(figsize=(18, 8))  # Adjust the figure size as needed
@@ -157,10 +158,6 @@ def animate_simulation(car, path, pid, mpc_controller, dt=0.1, max_time=20.0, se
         # Update last closest index for the next frame
         last_closest_idx = closest_idx
 
-        # Find the target velocity using the new closest index
-        target_velocity = 75 
-        # target_velocity = path_points[closest_idx, 2]
-
         # Extract a subset of path points to send to the controller
         # Wrap the start and end indices for a closed-loop path
         total_points = len(path_points)
@@ -177,14 +174,12 @@ def animate_simulation(car, path, pid, mpc_controller, dt=0.1, max_time=20.0, se
         path_segment_line.set_data(path_segment[:, 0], path_segment[:, 1])
 
         # Compute cross-track error (CTE)
-        # cte = np.linalg.norm(path_points[closest_idx, :2] - np.array([car.x, car.y]))
         cte = compute_cte(car, path_points, closest_idx)
         cte_data.append(cte)
 
         # PID controller for velocity
         throttle = pid.compute(target_velocity, car.velocity, dt)
-        steering_angle, predicted_positions = mpc_controller.get_lateral_control(car, dt, closest_idx) # We may need to take into account the throttle
-        # throttle, steering_angle, predicted_positions = mpc_controller.get_control(car, dt, closest_idx)
+        steering_angle, predicted_positions = mpc_controller.get_lateral_control(car, dt, closest_idx) 
         print(f"Throttle: {throttle}, Steering Angle: {steering_angle}")
         
         steering_angle_data.append(steering_angle)
