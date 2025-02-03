@@ -1,4 +1,8 @@
-# Project Dependencies and Instructions
+# MPC for Lateral Control 
+
+Hi, this a lightweight python-based simulator that includes the planner and controller used in our paper. 
+
+## Project Dependencies and Instructions
 
 ## Dependencies
 
